@@ -1,2 +1,0 @@
-def prices(aisle):
-    input()

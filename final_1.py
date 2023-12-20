@@ -1,15 +1,24 @@
-# opens operating system so we can access files
+# main script for grocery program
+
 import os
-os.getcwd()
-os.chdir("final")
+import csv
+import pandas as pd
+import grocery_fun
 
-# opens file so we can use functions
-import grocery 
+# opens folder with function module
+# os.chdir("final")
 
-# if I change the directory after importing the module I need, can I still use the module?
-os.getcwd()
-os.chdir("final_data")
-os.listdir()
+# gives list of dictionaries
+grocery = "grocery2.csv"
+with open (grocery, "r") as file:
+    dict = csv.DictReader(file)
+    grocery_dict = [row for row in dict]
+
+# defines aisles variable
+aisles = [item["Aisle"] for item in grocery_dict]
+aisles = list(set(aisles))
+
+cart = []
 
 ###
 
@@ -18,64 +27,117 @@ print("Welcome to the Digital Grocery Store!")
 print("\nIf you've ever wanted to visualize your grocery trip before you did the real thing, you've come to the right place!")
 print("To shop at the Grocery Store, just select which aisles to enter, choose which items to buy, and repeat until you've completed your list.")
 
-print("\n")
-
-#variable
-begin = input("Would you like to begin? \nEnter 'yes' or 'no':\n")
-aisles = os.listdir()
+# asks for user input wheter to begin
+begin = input("\nWould you like to begin? \nEnter 'yes' or 'no':\n")
 
 print("\n")
 
-# continues or closes program based on user response
+# continues or closes program based on user input
 if begin == "yes":
     print("Ok, now entering the Grocery Store. \nWelcome!")
+
 # elif prevents else from running after if
-elif begin == "no": 
+elif begin == "no":
     print("Ok, now exiting the Grocery Store. \nBye bye!") 
     exit()
+
 else:
     print("Invalid entry, entering the Grocery Store by default!")
 
 ### 
 
-# I wanna use an API to collect data for aisles, but I can't install requests >:[
+print("\nThese are the Grocery Store aisles:\n", aisles)
 
-print("\n")
-print("These are the Grocery Store aisles:\n", aisles)
+# asks for user input for aisle to enter
+aisles_name = input("\nEnter the name of the aisle you'd like to enter:\n") 
+incorrect = 0
 
-print("\n")
-aisles_enter = input("Enter the file name of the aisle you'd like to enter: ") 
-path = os.path.exists(aisles_enter)
+# checks for aisle
+items = [item["Item"] for item in grocery_dict if item["Aisle"] == aisles_name]
+items = list(set(items))
+# print(items)
 
-while path == True:
-    print("alrighty")
-    break
+# lists items in aisle
+if items:
+    print(f"\nThese are the items in the {aisles_name} aisle:\n", items)
 
-while path == False:
-    print("sorry bud")
-    break
+# checks for aisle after incorrect entry 
+while aisles_name not in aisles:
+    print("\nInvalid entry, try again.") 
+    incorrect += 1
+    if incorrect == 3:
+        print("\nThree invalid entries, do you want to keep shopping?")
+        aisles_con = input("Enter 'yes' or 'no':\n")
+        if aisles_con == "no":
+            print("\nOk, now exiting the Grocery Store. \nBye bye!")
+            exit()
+        elif aisles_con == "yes":
+            print("\nOk, continuing shopping! \nJust remember to enter the exact name of the aisle you'd like to enter.")
+        else:
+            print("\nInvalid entry, continuing shopping by default! \nJust remember to enter the exact name of the aisle you'd like to enter.")
+            incorrect = 0  # resets incorrect count
+    aisles_name = input("\nEnter the name of the aisle you'd like to enter:\n")
 
-
+    # checks for aisle after correct entry
+    if aisles_name in aisles:
+        items = [item["Item"] for item in grocery_dict if item["Aisle"] == aisles_name]
+        items = list(set(items))
+        print(f"\nThese are the items in the {aisles_name} aisle:\n", items)
 
 ###
 
-# lists 
-# can webscrape for data instead, then make it into lists/aisles
-# what if I made the differnet aisles into separate files O_O
-# so users can import the speific aisle/file they want to select items from
+# asks for user input for item to add
+items_name = input("\nEnter the item you'd like to add:\n") 
+incorrect = 0 
 
-##fruits = ["banana, mango, apple, blueberry, papaya"]
-##vegetables = ["lettuce, broccoli, carrot, cabbage, radish"]
-##grains = ["rice, oats, quinoa, wheat, barley"]
+# checks for item
+add = [item["Item"] for item in grocery_dict if item["Item"] == items_name]
+add = list(set(add))
+# print(add)
 
-# select what list you want to select from
-# select what items you want from the list 
-# find the prices
+# lists items in aisle
+if items:
+    cart.append(items_name)
+    print("\nThese are the items in your cart:\n", cart)
 
-##aisle = input("Choose which aisle to select from: ") 
-##items = input("Choose what items you would like from the aisle: ") 
-##items_more = input("Would you like to select more items?: ") 
+# checks for item after incorrect entry 
+while items_name not in items:
+    print("\nInvalid entry, try again.") 
+    incorrect += 1
+    if incorrect == 3:
+        print("\nThree invalid entries, do you want to keep shopping?")
+        items_con = input("Enter 'yes' or 'no':\n")
+        if items_con == "no":
+            print("\nOk, now exiting the Grocery Store. \nBye bye!")
+            exit()
+        elif items_con == "yes":
+            print("\nOk, continuing shopping! \nJust remember to enter the exact name of the item you want.")
+        else:
+            print("\nInvalid entry, continuing shopping by default! \nJust remember to enter the exact name of the item you want.")
+            incorrect = 0  # resets incorrect count
+    items_name = input("\nEnter the item you'd like to add:\n")
 
+# checks for item after correct entry
+    if items:
+        cart.append(items_name)
+        print("\nThese are the items in your cart:\n", cart)
 
-##grocery_list = [] 
-##grocery_list.append(input) 
+### 
+
+grocery_con = input("\nWould you like to continue shopping? \nEnter 'yes' or 'no':\n") 
+
+if grocery_con == "no": 
+    print("\nOk, now proceeding to checkout.") 
+    grocery_fun.checkout()
+
+while grocery_con == "yes":
+    print("\nOk, returning to aisle menu.") 
+    grocery_fun.shop()
+
+    grocery_con = input("\nWould you like to continue shopping? \nEnter 'yes' or 'no':\n")
+    if grocery_con == "no": 
+        print("\nOk, now proceeding to checkout.")
+        break
+
+grocery_fun.checkout()
+# when grocery_fun.shop() is used instead of checkout, list appends
