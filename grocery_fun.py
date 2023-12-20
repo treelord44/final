@@ -23,7 +23,7 @@ cart = []
 
 def shop():
     """
-    docstring
+    Allows user to choose aisle to enter and items to add
     """
     print("\nThese are the Grocery Store aisles:\n", aisles)
 
@@ -104,7 +104,7 @@ def shop():
 
 def checkout():
     """
-    docstring
+    Gives user total cost of items added
     """
     total_cost = 0
 
