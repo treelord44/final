@@ -28,4 +28,4 @@ This program simulates the process of grocery shopping on a digital interface.
 
  - Finally, it asks if the user if they want to continue shopping 
    - If yes, it lists the aisles in the store
-   - If no, it totals the cost of the items and exits the store
+   - If no, it totals the cost of the items and exits the store 
